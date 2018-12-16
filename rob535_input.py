@@ -59,7 +59,7 @@ class PerceptionDataGenerator1(tf.keras.utils.Sequence):
 
 
     def on_epoch_end(self):
-        self.data = self.data.sample(frac=1).reset_indexes(drop=True)
+        self.data = self.data.sample(frac=1).reset_index(drop=True)
 
 
     def __read_data__(self, id):
