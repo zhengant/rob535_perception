@@ -162,6 +162,7 @@ def dense_block(x, stage, nb_layers, nb_filter, growth_rate, dropout_rate=None, 
         concat_feat = tf.keras.layers.concatenate([concat_feat, x], axis=concat_axis,
                                                   name='concat_'+str(stage)+'_'+str(branch))
 
+
         if grow_nb_filters:
             nb_filter += growth_rate
 

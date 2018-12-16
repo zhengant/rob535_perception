@@ -5,7 +5,7 @@ import rob535_input
 
 
 def create_model(n_classes):
-    model = DenseNet(classes=n_classes, weights_path='models/densenet121_weights_tf.h5')
+    model = DenseNet(classes=n_classes, reduction=0.5, weights_path='models/densenet121_weights_tf.h5')
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     return model
