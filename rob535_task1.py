@@ -35,6 +35,8 @@ def output_predicted_labels(test_df, labels, filename):
 
 
 def main():
+    sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+
     model = create_model(3)
     train, val, test = rob535_input.generate_df('trainval', 'test', 0.2)
     image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rotation_range=15, width_shift_range=20,
