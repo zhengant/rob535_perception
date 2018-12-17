@@ -1,3 +1,5 @@
+import sys
+
 import tensorflow as tf
 import numpy as np
 
@@ -58,7 +60,7 @@ def train_new_model():
     output_predicted_labels(test, labels, 'task1_out.csv')
 
 
-def predict_best_model():
+def predict_using_best():
     model = tf.keras.models.load_model('best_model.h5', custom_objects={'Scale':Scale})
 
     _, _, test = rob535_input.generate_df('trainval', 'test', 0)
@@ -69,7 +71,10 @@ def predict_best_model():
 
 
 def main():
-    predict_best_model()
+    if len(sys.argv) < 2 or sys.argv[1] == 'train':
+        train_new_model()
+    else:
+        predict_using_best()
 
 if __name__ == '__main__':
     main()
