@@ -63,7 +63,9 @@ def DenseNet(nb_dense_block=4, growth_rate=32, nb_filter=64, reduction=0.0, drop
     x = tf.keras.layers.Activation('relu', name='relu'+str(final_stage)+'_blk')(x)
     x = tf.keras.layers.GlobalAveragePooling2D(name='pool'+str(final_stage))(x)
 
-    x = tf.keras.layers.Dense(classes, name='fc6_mod')(x)
+    x = tf.keras.layers.Dense(1000, name='fc6')(x)
+    x = tf.keras.layers.Activation('relu', name='relu_out')(x)
+    x = tf.keras.layers.Dense(classes, name='fc7')(x)
     x = tf.keras.layers.Activation('softmax', name='prob')(x)
 
     model = tf.keras.models.Model(img_input, x, name='densenet')
