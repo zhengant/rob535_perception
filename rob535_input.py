@@ -48,11 +48,13 @@ class PerceptionDataGenerator1(tf.keras.utils.Sequence):
 
 
     def __getitem__(self, index):
-        x = np.empty((self.batch_size, *self.image_size, 3))
-        y = np.empty(self.batch_size, dtype=int)
-
         begin_idx = index*self.batch_size
         end_idx = min(len(self.data), (index+1)*self.batch_size)
+        size = end_idx - begin_idx
+
+        x = np.empty((size, *self.image_size, 3))
+        y = np.empty(size, dtype=int)
+
         for batch_idx, data_idx in enumerate(range(begin_idx, end_idx)):
             x[batch_idx,] = self.__read_data__(self.data[self.id_col].values[data_idx])
             if self.label_col is not None:
