@@ -1,6 +1,9 @@
+import sys
+
 import tensorflow as tf
 
 from densenet121_mod import DenseNet
+from custom_layers import Scale
 import rob535_input
 
 
@@ -36,25 +39,37 @@ def output_predicted_labels(test_df, labels, filename):
             out.write(id + ',' + str(label) + '\n')
 
 
-def main():
-    sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
-
+def train_new_model():
     model = create_model(3)
     train, val, test = rob535_input.generate_df('trainval', 'test', 0.2)
     image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rotation_range=15, width_shift_range=20,
-                                                                      height_shift_range=20, brightness_range=[0.5,1.5],
+                                                                      height_shift_range=20,
+                                                                      brightness_range=[0.5, 1.5],
                                                                       shear_range=15, zoom_range=0.5,
                                                                       horizontal_flip=True)
 
     train_gen = rob535_input.PerceptionDataGenerator1('trainval', train, image_generator)
     val_gen = rob535_input.PerceptionDataGenerator1('trainval', val, image_generator)
-    test_gen = rob535_input.PerceptionDataGenerator1('testval', test, label_col=None)
+    test_gen = rob535_input.PerceptionDataGenerator1('test', test, label_col=None)
 
     train_model(model, train_gen, val_gen)
     labels = predict_test(model, test_gen)
 
     output_predicted_labels(test, labels, 'task1_out.csv')
 
+
+def predict_best_model():
+    model = tf.keras.models.load_model('best_model.h5', custom_objects={'Scale':Scale})
+
+    _, _, test = rob535_input.generate_df('trainval', 'test', 0)
+    test_gen = rob535_input.PerceptionDataGenerator1('test', test, label_col=None)
+    labels = predict_test(model, test_gen)
+
+    output_predicted_labels(test, labels, 'task1_out.csv')
+
+
+def main():
+    predict_best_model()
 
 if __name__ == '__main__':
     main()
