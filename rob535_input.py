@@ -13,8 +13,9 @@ def generate_df(trainval_dir, test_dir, validation_split):
     # get test data
     test = []
     for guid in os.listdir(test_dir):
-        if os.path.isdir(test_dir + guid):
-            for filename in os.listdir(test_dir + guid):
+        id_dir = test_dir + '/' + guid
+        if os.path.isdir(id_dir):
+            for filename in os.listdir(id_dir):
                 if filename[5] == 'c': # cloud image proj, pick cloud only
                     test.append(guid + '/' + filename[:4]) # guid + / + 000x
 
@@ -55,7 +56,11 @@ class PerceptionDataGenerator1(tf.keras.utils.Sequence):
             if self.label_col is not None:
                 y[batch_idx] = self.data[self.label_col].values[data_idx]
 
-        return x if self.label_col is None else x, tf.keras.utils.to_categorical(y, self.n_classes)
+
+        if self.label_col is None:
+            return x
+        else:
+            return x, tf.keras.utils.to_categorical(y, self.n_classes)
 
 
     def on_epoch_end(self):
