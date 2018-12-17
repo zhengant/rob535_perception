@@ -7,15 +7,15 @@ import rob535_input
 
 
 def create_model(n_classes):
-    model = DenseNet(classes=n_classes, reduction=0.5, weights_path='models/densenet121_weights_tf.h5')
+    model = DenseNet(classes=n_classes, reduction=0.5, dropout_rate=0.5, weights_path='models/densenet121_weights_tf.h5')
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     return model
 
 
 def train_model(model, train_gen, val_gen):
-    early_stop = tf.keras.callbacks.EarlyStopping(patience=5)
-    model_checkpoint = tf.keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_loss',
+    early_stop = tf.keras.callbacks.EarlyStopping(monitor='val_acc', patience=5)
+    model_checkpoint = tf.keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_acc',
                                                           save_best_only=True)
     model.fit_generator(train_gen, epochs=100,
                         callbacks=[early_stop, model_checkpoint], validation_data=val_gen,
