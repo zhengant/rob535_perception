@@ -76,8 +76,8 @@ class PerceptionDataGenerator1(tf.keras.utils.Sequence):
         img[:, :, 1] = (img[:, :, 1] - 116.78) * 0.017
         img[:, :, 2] = (img[:, :, 2] - 123.68) * 0.017
 
-        if self.label_col is not None:
-            img = self.image_generator.random_transform(img)
+        # if self.label_col is not None:
+        #     img = self.image_generator.random_transform(img)
 
         return img
 
