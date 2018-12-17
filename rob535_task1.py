@@ -1,6 +1,5 @@
-import sys
-
 import tensorflow as tf
+import numpy as np
 
 from densenet121_mod import DenseNet
 from custom_layers import Scale
@@ -26,7 +25,8 @@ def train_model(model, train_gen, val_gen):
 
 
 def predict_test(model, test_input):
-    labels = model.predict_generator(test_input)
+    probs = model.predict_generator(test_input)
+    labels = np.argmax(probs, axis=1)
 
     return labels
 
