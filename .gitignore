@@ -8,3 +8,5 @@ models/
 demo/
 dummy/
 deploy.zip
+darknet/
+YOLOv3/
