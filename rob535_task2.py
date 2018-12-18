@@ -20,7 +20,7 @@ def create_model():
 
 def train_model(model, yolo, target_classes, train_df):
     xywh_train = generate_xywh_task2(yolo, train_df, 'trainval', target_classes)
-    centroids_train = train_df['centroid'].values
+    centroids_train = train_df.as_matrix(columns=['x', 'y', 'z'])
 
     early_stop = keras.callbacks.EarlyStopping(monitor='val_acc', patience=5)
     model_checkpoint = keras.callbacks.ModelCheckpoint(filepath='best_model_task2.h5', monitor='val_acc',

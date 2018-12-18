@@ -50,13 +50,15 @@ def generate_df2(trainval_dir, test_dir, validation_split):
 
         data = {
             'guid/code': [],
-            'centroid': []
+            'x': [],
+            'y': [],
+            'z': []
         }
 
         _ = centroids_csv.readline() # discard header in file
         done = False
         while not done:
-            centroid = np.zeros(3)
+            # centroid = []
             id = ""
             for i in range(3):
                 line = centroids_csv.readline()
@@ -75,11 +77,10 @@ def generate_df2(trainval_dir, test_dir, validation_split):
                 if id == '':
                     id = id_dim[:-2]
 
-                centroid[i] = val
+                data[dimensions[i]].append(val)
 
             if not done:
                 data['guid/code'].append(id)
-                data['centroid'].append(centroid)
 
 
     trainval = pd.DataFrame(data)
@@ -89,7 +90,7 @@ def generate_df2(trainval_dir, test_dir, validation_split):
                     
 
 def generate_xywh_task2(yolo, data_df, dir_name, target_classes, id_col='guid/code'):
-    xywh = np.empty((len(data_df), 4))
+    xywh = np.random.random((len(data_df), 4))
 
     for i in range(len(data_df)):
         id = data_df[id_col].values[i]
