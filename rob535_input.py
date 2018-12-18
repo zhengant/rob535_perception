@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 import cv2
 import numpy as np
 import tensorflow as tf
+from yolo_model import process_image
 
 def generate_df(trainval_dir, test_dir, validation_split):
     """
@@ -25,7 +26,87 @@ def generate_df(trainval_dir, test_dir, validation_split):
     train, val = train_test_split(ids_labels, test_size=validation_split)
 
     return train, val, test
+
+
+def generate_df2(trainval_dir, test_dir, validation_split):
+    """
+    generates dfs for train, val, test data for creating PerceptionDataGenerator2
+    """
+
+    # test data
+    test = []
+    for guid in os.listdir(test_dir):
+        id_dir = test_dir + '/' + guid
+        if os.path.isdir(id_dir):
+            for filename in os.listdir(id_dir):
+                if filename[5] == 'c':  # cloud image proj, pick cloud only
+                    test.append(guid + '/' + filename[:4])  # guid + / + 000x
+
+    test = pd.DataFrame(test, columns=['guid/image'])
+
+    # trainval data
+    with open(trainval_dir + '/centroids.csv', 'r') as centroids_csv:
+        dimensions = ['x', 'y', 'z']
+
+        data = {
+            'guid/code': [],
+            'centroid': []
+        }
+
+        _ = centroids_csv.readline() # discard header in file
+        done = False
+        while not done:
+            centroid = np.zeros(3)
+            id = ""
+            for i in range(3):
+                line = centroids_csv.readline()
+                if line == '':
+                    done = True
+                    break
+
+                id_dim, val = line.split(',')
+                id_dim = id_dim.strip()
+                val = float(val)
+
+                # check to make sure ids match up and dims are in right order
+                assert(id_dim[-1] == dimensions[i])
+                assert(id == '' or id_dim[:-2] == id)
+
+                if id == '':
+                    id = id_dim[:-2]
+
+                centroid[i] = val
+
+            if not done:
+                data['guid/code'].append(id)
+                data['centroid'].append(centroid)
+
+
+    trainval = pd.DataFrame(data)
+    train, val = train_test_split(trainval, test_size=validation_split)
+
+    return train, val, test
                     
+
+def generate_xywh_task2(yolo, data_df, dir_name, target_classes, id_col='guid/code'):
+    xywh = np.empty((len(data_df), 4))
+
+    for i in range(len(data_df)):
+        id = data_df[id_col].values[i]
+        img = cv2.imread(dir_name + '/' + id + '_image.jpg')
+        pimg = process_image(img)
+
+        boxes, classes, scores = yolo.predict(pimg, img.shape)
+        sorted_boxes = sorted(boxes, key=scores)
+        sorted_classes = sorted(classes, key=scores)
+
+        for cls, box in zip(sorted_classes, sorted_boxes):
+            if cls in target_classes:
+                xywh[i,] = box
+                break
+
+    return xywh
+
 
 class PerceptionDataGenerator1(tf.keras.utils.Sequence):
     """
@@ -85,3 +166,44 @@ class PerceptionDataGenerator1(tf.keras.utils.Sequence):
 
         return img
 
+
+# class PerceptionDataGenerator2(tf.keras.utils.Sequence):
+#     def __init__(self, dir_name, data, yolo, target_classes=None, id_col='guid/code', label_col='centroid', batch_size=32):
+#         self.dir_name = dir_name
+#         self.data = data
+#         self.yolo = yolo
+#
+#         if target_classes is None:
+#             target_classes = {
+#
+#             }
+#
+#         self.id_col = id_col
+#         self.label_col = label_col
+#         self.batch_size = batch_size
+#
+#     def __len__(self):
+#         return int(np.ceil(len(self.data) / self.batch_size))
+#
+#
+#     def __getitem__(self, index):
+#         begin_idx = index * self.batch_size
+#         end_idx = min(len(self.data), (index + 1) * self.batch_size)
+#         size = end_idx - begin_idx
+#
+#         x = np.empty((size, 2))
+#         y = np.empty((size, 3))
+#
+#         for batch_idx, data_idx in enumerate(range(begin_idx, end_idx)):
+#
+#
+#
+#     def on_epoch_end(self):
+#         self.data = self.data.sample(frac=1).reset_index(drop=True)
+#
+#
+#     def __getxy__(self, id):
+#         img = cv2.imread(self.dir_name + '/' + id + '_image.jpg')
+#         pimg = process_image(img)
+#
+#         boxes, classes, scores = self.yolo.predict(pimg, img.shape)
