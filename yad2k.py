@@ -12,15 +12,15 @@ import os
 from collections import defaultdict
 
 import numpy as np
-from keras import backend as K
-from keras.layers import (Conv2D, GlobalAveragePooling2D, Input, Reshape,
+from tensorflow.keras import backend as K
+from tensorflow.keras.layers import (Conv2D, GlobalAveragePooling2D, Input, Reshape,
                           ZeroPadding2D, UpSampling2D, Activation, Lambda, MaxPooling2D)
-from keras.layers.advanced_activations import LeakyReLU
-from keras.layers.merge import concatenate, add
-from keras.layers.normalization import BatchNormalization
-from keras.models import Model
-from keras.regularizers import l2
-from keras.utils.vis_utils import plot_model as plot
+from tensorflow.keras.layers.advanced_activations import LeakyReLU
+from tensorflow.keras.layers.merge import concatenate, add
+from tensorflow.keras.layers.normalization import BatchNormalization
+from tensorflow.keras.models import Model
+from tensorflow.keras.regularizers import l2
+from tensorflow.keras.utils.vis_utils import plot_model as plot
 
 
 parser = argparse.ArgumentParser(
