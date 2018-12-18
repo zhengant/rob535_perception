@@ -10,3 +10,4 @@ dummy/
 deploy.zip
 darknet/
 YOLOv3/
+*.h5
