@@ -18,18 +18,15 @@ def create_model():
     return model
 
 
-def train_model(model, yolo, target_classes, train_df, val_df):
+def train_model(model, yolo, target_classes, train_df):
     xywh_train = generate_xywh_task2(yolo, train_df, 'trainval', target_classes)
     centroids_train = train_df['centroid'].values
-
-    xywh_val = generate_xywh_task2(yolo, val_df, 'trainval', target_classes)
-    centroids_val = val_df['centroid'].values
 
     early_stop = keras.callbacks.EarlyStopping(monitor='val_acc', patience=5)
     model_checkpoint = keras.callbacks.ModelCheckpoint(filepath='best_model_task2.h5', monitor='val_acc',
                                                           save_best_only=True)
     model.fit(xywh_train, centroids_train, epochs=1000, callbacks=[early_stop, model_checkpoint],
-              validation_data=(xywh_val, centroids_val))
+              validation_split=0.2)
 
     return model
 
@@ -53,9 +50,9 @@ def output_predicted_centroids(test_df, centroids, filename):
 
 def train_new_model(yolo, target_classes):
     model = create_model()
-    train, val, test = generate_df2('trainval', 'test', 0.2)
+    train, _, test = generate_df2('trainval', 'test', 0)
 
-    model = train_model(model, yolo, target_classes, train, val)
+    model = train_model(model, yolo, target_classes, train)
     centroids = predict_test(model, yolo, target_classes, test)
 
     output_predicted_centroids(test, centroids, 'task2_out.csv')
