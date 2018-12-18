@@ -1,16 +1,17 @@
 import sys
 
-import tensorflow as tf
+# import tensorflow as tf
+import keras
 
 from yolo_model import YOLO
 from rob535_input import generate_df2, generate_xywh_task2
 
 
 def create_model():
-    model = tf.keras.models.Sequential()
-    model.add(tf.keras.layers.Dense(64, input_dim=4, activation='elu', use_bias=True))
-    model.add(tf.keras.layers.Dense(128, activation='relu', use_bias=True))
-    model.add(tf.keras.layers.Dense(32, use_bias=True))
+    model = keras.models.Sequential()
+    model.add(keras.layers.Dense(64, input_dim=4, activation='elu', use_bias=True))
+    model.add(keras.layers.Dense(128, activation='relu', use_bias=True))
+    model.add(keras.layers.Dense(32, use_bias=True))
 
     model.compile(optimizer='adam', loss='mse', metrics=['accuracy'])
 
@@ -24,11 +25,9 @@ def train_model(model, yolo, target_classes, train_df, val_df):
     xywh_val = generate_xywh_task2(yolo, val_df, 'trainval', target_classes)
     centroids_val = val_df['centroid'].values
 
-
-    early_stop = tf.keras.callbacks.EarlyStopping(monitor='val_acc', patience=5)
-    model_checkpoint = tf.keras.callbacks.ModelCheckpoint(filepath='best_model_task2.h5', monitor='val_acc',
+    early_stop = keras.callbacks.EarlyStopping(monitor='val_acc', patience=5)
+    model_checkpoint = keras.callbacks.ModelCheckpoint(filepath='best_model_task2.h5', monitor='val_acc',
                                                           save_best_only=True)
-
     model.fit(xywh_train, centroids_train, epochs=1000, callbacks=[early_stop, model_checkpoint],
               validation_data=(xywh_val, centroids_val))
 
@@ -63,7 +62,7 @@ def train_new_model(yolo, target_classes):
 
 
 def predict_using_best(yolo, target_classes):
-    model = tf.keras.models.load_model('best_model_task2.h5')
+    model = keras.models.load_model('best_model_task2.h5')
     _, _, test = generate_df2('trainval', 'test', 0)
     centroids = predict_test(model, yolo, target_classes, test)
 

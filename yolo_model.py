@@ -1,9 +1,10 @@
 """YOLO v3 output
 """
 
-import tensorflow as tf
+# import tensorflow as tf
 import numpy as np
 import cv2
+import keras
 # import keras.backend as K
 # from keras.models import load_model
 
@@ -49,7 +50,7 @@ class YOLO:
         self._t1 = obj_threshold
         self._t2 = nms_threshold
         # self.valid_classes = valid_classes
-        self._yolo = tf.keras.models.load_model(filename)
+        self._yolo = keras.models.load_model(filename)
 
     def _sigmoid(self, x):
         """sigmoid.
