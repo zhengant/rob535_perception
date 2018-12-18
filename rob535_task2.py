@@ -32,7 +32,7 @@ def train_model(model, yolo, target_classes, train_df):
 
 
 def predict_test(model, yolo, target_classes, test_df):
-    xywh_test = generate_xywh_task2(yolo, test_df, 'trainval', target_classes)
+    xywh_test = generate_xywh_task2(yolo, test_df, 'test', target_classes)
 
     centroids = model.predict(xywh_test)
     return centroids
@@ -63,6 +63,7 @@ def train_new_model(yolo, target_classes):
 def predict_using_best(yolo, target_classes):
     model = keras.models.load_model('best_model_task2.h5')
     _, _, test = generate_df2('trainval', 'test', 0)
+
     centroids = predict_test(model, yolo, target_classes, test)
 
     output_predicted_centroids(test, centroids, 'task2_out.csv')
