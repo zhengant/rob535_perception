@@ -97,12 +97,13 @@ def generate_xywh_task2(yolo, data_df, dir_name, target_classes, id_col='guid/co
         pimg = process_image(img)
 
         boxes, classes, scores = yolo.predict(pimg, img.shape)
-        
-        if boxes is not None:
-            sorted_boxes = sorted(boxes, key=scores)
-            sorted_classes = sorted(classes, key=scores)
 
-            for cls, box in zip(sorted_classes, sorted_boxes):
+        if boxes is not None:
+            sorted_idxs = np.argsort(scores)
+
+            for idx in sorted_idxs:
+                cls = classes[idx]
+                box = boxes[idx]
                 if cls in target_classes:
                     xywh[i,] = box
                     break
