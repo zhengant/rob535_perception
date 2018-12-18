@@ -42,7 +42,7 @@ def generate_df2(trainval_dir, test_dir, validation_split):
                 if filename[5] == 'c':  # cloud image proj, pick cloud only
                     test.append(guid + '/' + filename[:4])  # guid + / + 000x
 
-    test = pd.DataFrame(test, columns=['guid/image'])
+    test = pd.DataFrame(test, columns=['guid/code'])
 
     # trainval data
     with open(trainval_dir + '/centroids.csv', 'r') as centroids_csv:
@@ -99,7 +99,7 @@ def generate_xywh_task2(yolo, data_df, dir_name, target_classes, id_col='guid/co
         boxes, classes, scores = yolo.predict(pimg, img.shape)
 
         if boxes is not None:
-            sorted_idxs = np.argsort(scores)
+            sorted_idxs = reversed(np.argsort(scores))
 
             for idx in sorted_idxs:
                 cls = classes[idx]
