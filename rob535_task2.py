@@ -52,7 +52,9 @@ def train_new_model(yolo, target_classes):
     model = create_model()
     train, _, test = generate_df2('trainval', 'test', 0)
 
-    model = train_model(model, yolo, target_classes, train)
+    train_model(model, yolo, target_classes, train)
+
+    model = keras.models.load_model('best_model_task2.h5')
     centroids = predict_test(model, yolo, target_classes, test)
 
     output_predicted_centroids(test, centroids, 'task2_out.csv')
