@@ -11,7 +11,7 @@ def create_model():
     model = keras.models.Sequential()
     model.add(keras.layers.Dense(64, input_dim=4, activation='elu', use_bias=True))
     model.add(keras.layers.Dense(128, activation='relu', use_bias=True))
-    model.add(keras.layers.Dense(32, use_bias=True))
+    model.add(keras.layers.Dense(3, use_bias=True))
 
     model.compile(optimizer='adam', loss='mse', metrics=['accuracy'])
 
@@ -67,7 +67,7 @@ def predict_using_best(yolo, target_classes):
 
 
 def main():
-    yolo = YOLO(0.6, 0.5)
+    yolo = YOLO(0.25, 0.5)
 
     target_classes = {
         1: 'bicycle',
