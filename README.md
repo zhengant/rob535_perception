@@ -12,6 +12,8 @@ The final models we had for task 1 and task2 can be downloaded at the following 
 * Task 1: https://drive.google.com/file/d/1Yw5loURLevxZ235ayqOcX8S8NFhA2JXO/view?usp=sharing
 * Task 2: https://drive.google.com/file/d/16bUOla2ysJe1ROyw-a2pnYFXzfaw6O4Q/view?usp=sharing
 
+Both tasks expect `trainval` and `test` directories containing the training and test data, respectively, with the organization unchanged from how it was distributed.
+
 ## Task 1
 Task 1 can be run as follows: 
 `python3 rob535_task1.py [train|predict]`
