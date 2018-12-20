@@ -17,7 +17,7 @@ def create_model(n_classes):
 
 def train_model(model, train_gen, val_gen):
     early_stop = tf.keras.callbacks.EarlyStopping(monitor='val_acc', patience=5)
-    model_checkpoint = tf.keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_acc',
+    model_checkpoint = tf.keras.callbacks.ModelCheckpoint(filepath='best_model_task1.h5', monitor='val_acc',
                                                           save_best_only=True)
     model.fit_generator(train_gen, epochs=100,
                         callbacks=[early_stop, model_checkpoint], validation_data=val_gen,
@@ -55,13 +55,15 @@ def train_new_model():
     test_gen = rob535_input.PerceptionDataGenerator1('test', test, label_col=None)
 
     train_model(model, train_gen, val_gen)
+
+    model = tf.keras.models.load_model('best_model_task1.h5')
     labels = predict_test(model, test_gen)
 
     output_predicted_labels(test, labels, 'task1_out.csv')
 
 
 def predict_using_best():
-    model = tf.keras.models.load_model('best_model.h5', custom_objects={'Scale':Scale})
+    model = tf.keras.models.load_model('best_model_task1.h5', custom_objects={'Scale':Scale})
 
     _, _, test = rob535_input.generate_df('trainval', 'test', 0)
     test_gen = rob535_input.PerceptionDataGenerator1('test', test, label_col=None)
