@@ -23,3 +23,8 @@ Sidenote: DenseNet uses a lot of memory. You may have to reduce the batch size t
 
 ## Task 2
 Task 2 has the same interface as task 1, execpt you are running the `rob535_task2.py` script instead. Before you can run it, you will need to setup the YOLOv3 model. Download the official weights at this link: https://pjreddie.com/media/files/yolov3.weights. The repo should already have a `yolo.cfg` file at the top level. Run `python yad2k.py yolo.cfg yolov3.weights yolo.h5` to convert the offical model to a Keras one (`yolov3.weights` should be whatever filename you gave the official model you downloaded). There might be an error at the end about pydot but it is (seems) harmless. Then, the `rob535_task2.py` script will either train a new model that converts bouding boxes to centroids, saving the best one to a file called `best_model_task2.h5`, and producing centroids for the test set, or it will look for the `best_model_task2.h5` file and produce the centroids on the test set, just like in Task 1. In both cases, the outputs are written to a csv called `task2_out.csv`. 
+
+## Credits
+`densenet121_mod.py` and `custom_layers.py` are modified versions of code from https://github.com/flyyufelix/DenseNet-Keras
+
+`yad2k.py` and `yolo.cfg` are directly from https://github.com/xiaochus/YOLOv3. `yolo_model.py` is modified from the same repo
